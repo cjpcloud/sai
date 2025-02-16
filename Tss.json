@@ -1,0 +1,54 @@
+{
+  "IMG_7395.JPG": {
+    "id": "8chbqJQBx7a-6iTTruax",
+    "index": "atu0-server-compliance-metrics",
+    "type": "_doc",
+    "additionalProperties": {
+      "techName": "Windows Server 2012 TSS",
+      "techVersion": "7.0"
+    },
+    "affectedItemName": "SE114171",
+    "affectedItemType": "Windows Server",
+    "appCode": "2H00",
+    "complianceAssetId": "28,523",
+    "complianceFailure": false,
+    "createDate": "Oct 14, 2024 @ 01:08:51.000",
+    "dataSource": "TENABLE_SC",
+    "environment": "PROD",
+    "exempt": false
+  },
+  "IMG_7396.JPG": {
+    "dataSource": "TENABLE_SC",
+    "environment": "PROD",
+    "exempt": false,
+    "id": "13,519,425",
+    "importIdentifier": "28523-181.2.2.21",
+    "importSource": "scr-tssn-scan",
+    "issueName": "(L1) Ensure Deny access to this computer from the network to members of Administrators group (MS only)",
+    "issueReferenceId": "2.2.21",
+    "issueReferenceIdType": "TSS Section Number",
+    "issueState": "OPEN",
+    "issueType": "TSS",
+    "lastDetectedDate": "Jan 25, 2025 @ 16:19:11.000",
+    "remediationOwner": "Asset Owner",
+    "remediationOwnerType": "Self-Service",
+    "reopenCount": 0,
+    "scanTechId": 181,
+    "startDate": "Oct 13, 2024 @ 05:06:31.000"
+  },
+  "IMG_7397.JPG": {
+    "lastDetectedDate": "Jan 25, 2025 @ 16:19:11.000",
+    "remediationOwner": "Asset Owner",
+    "remediationOwnerType": "Self-Service",
+    "reopenCount": 0,
+    "scanTechId": 181,
+    "startDate": "Oct 13, 2024 @ 05:06:31.000",
+    "timestamp": "Jan 27, 2025 @ 10:22:47.669",
+    "updateDate": "Jan 27, 2025 @ 04:22:24.000",
+    "logs": [
+      "Jan 27, 2025 @ 10:22:47.669 2H00",
+      "Jan 27, 2025 @ 10:22:47.669 V0T0",
+      "Jan 27, 2025 @ 10:22:47.669 WPI0"
+    ]
+  }
+}
