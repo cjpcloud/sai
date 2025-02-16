@@ -1,0 +1,46 @@
+1. checking connection
+curl -u "elastic:JPNEDmZKHONzBDCdoD2HS1zF" \
+  -H "Content-Type: application/json" \
+  "${ES_URL}/atu0-server-compliance-metrics"
+
+----------
+2. json file push to elasticsearch dashboard
+
+ curl -u "elastic:JPNEDmZKHONzBDCdoD2HS1zF" -X POST "${ES_URL}/_bulk" -H "Content-Type: application/json" --data-binary @Vulnerabilities.json
+ curl -u "elastic:JPNEDmZKHONzBDCdoD2HS1zF"   -X POST "${ES_URL}/atu0-server-compliance-metrics/_doc/"   -H "Content-Type: application/json"   -d @Open-data.json
+curl -u "elastic:JPNEDmZKHONzBDCdoD2HS1zF"   -X POST "${ES_URL}/atu0-server-compliance-metrics/_doc/U8hbqJQBx7a-61TTqN6N" \
+-H "Content-Type: application/json" \
+-d '{
+    "appCode": "DXJ0",
+    "issueType": "Cryptography",
+    "priority": "P2",
+    "affectedItemName": "STRPLVADXJ0006",
+    "affectedItemType": "Unix Server",
+    "complianceAssetId": "1280160",
+    "complianceFailure": false,
+    "createDate": "2025-01-26T16:05:50.000Z",
+    "dataSource": "TENABLE_SC",
+    "environment": "PROD",
+    "issueReferenceId": 51192,
+    "issueState": "OPEN",
+    "lastDetectedDate": "2025-01-26T12:50:17.000Z",
+    "remediationOwner": "Asset Owner",
+    "remediationOwnerType": "Self-Service",
+    "reopenCount": 0,
+    "ruleId": "1254",
+    "severity": "Medium",
+    "solution": "https://connect.fg.rbc.com/docs/DOC-1476386",
+    "startDate": "2025-01-26T12:50:17.000Z",
+    "timestamp": "2025-01-27T10:22:46.267Z",
+    "updateDate": "2025-01-27T04:01:54.000Z"
+}'
+
+
+curl -u "elastic:JPNEDmZKHONzBDCdoD2HS1zF" -X GET "${ES_URL}/atu0-server-compliance-metrics/_doc/U8hbqJQBx7a-61TTqN6N?pretty"
+
+
+
+
+-----------------------------
+
+
