@@ -1,0 +1,124 @@
+---
+- name: Count IT risk metrics from Elasticsearch and send email
+  hosts: localhost
+  gather_facts: no
+  vars:
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    smtp_user: "mbheemavarapu10@gmail.com"
+    smtp_password: "suvn sijz beuy fdno"  # Store securely
+    email_recipients:
+      YY40: "mbheemavarapu10@gmail.com"
+      DXJ0: "mbheemavarapu10@gmail.com"
+      WYE0: "mbheemavarapu10@gmail.com"
+      2H00: "mbheemavarapu10@gmail.com"
+      UFD8: "mbheemavarapu10@gmail.com"
+    email_cc: "it-compliance-team@example.com"
+    elasticsearch_host: "https://1f96ead7e4974ff08d59d4be0a43ef09.us-gov-east-1.aws.elastic-cloud.com:443"
+    elasticsearch_index: "atu0-server-compliance-metrics"
+    elastic_username: "elastic"
+    elastic_password: "JPNEDmZKHONzBDCdoD2HS1zF"  # Store securely
+    grafana_dashboard_link: "https://grafana.example.com/dashboard/it-risk-metrics"
+
+  tasks:
+    - name: Fetch IT risk metrics from Elasticsearch
+      uri:
+        url: "{{ elasticsearch_host }}/{{ elasticsearch_index }}/_search?pretty"
+        method: GET
+        headers:
+          Content-Type: "application/json"
+        user: "{{ elastic_username }}"
+        password: "{{ elastic_password }}"
+        force_basic_auth: yes
+        return_content: yes
+      register: es_response
+
+    - name: Debug raw Elasticsearch response
+      debug:
+        var: es_response.json
+
+    - name: Parse Elasticsearch response and extract relevant data
+      set_fact:
+        risk_metrics: "{{ es_response.json.hits.hits | map(attribute='_source') | list }}"
+
+    - name: Debug Elasticsearch parsed response
+      debug:
+        var: risk_metrics
+
+    - name: Initialize empty risk summary
+      set_fact:
+        risk_summary: {}
+
+    - name: Initialize risk category counts
+      set_fact:
+        risk_summary: "{{ risk_summary | combine({ item: {'Vulnerabilities': {'P1': 0, 'P2': 0}, 'Cryptography': {'P1': 0, 'P2': 0}, 'Open Data Risks': 0, 'TSS': 0} }) }}"
+      loop: "{{ email_recipients.keys() | list }}"
+      loop_control:
+        loop_var: item
+
+    - name: Count vulnerabilities and risks by app code
+      set_fact:
+        risk_summary: >-
+          {%- set counts = risk_summary.copy() -%}
+          {%- for item in risk_metrics -%}
+            {%- set app = item.get('appCode', 'UNKNOWN') -%}
+            {%- if app in counts.keys() -%}
+              {%- set issue_type = item.get('issueType', '') -%}
+              {%- set issue_state = item.get('issueState', '') -%}
+              {%- set priority = item.get('priority', '') -%}
+
+              {%- if issue_type in ['Vulnerability', 'Cryptography'] and priority in ['P1', 'P2'] -%}
+                {%- set _ = counts[app][issue_type].update({priority: counts[app][issue_type][priority] + 1}) -%}
+              {%- elif issue_type == 'Open Data' and issue_state == 'OPEN' -%}
+                {%- set _ = counts[app].update({'Open Data Risks': counts[app]['Open Data Risks'] + 1}) -%}
+              {%- elif issue_type == 'TSS' and issue_state == 'OPEN' -%}
+                {%- set _ = counts[app].update({'TSS': counts[app]['TSS'] + 1}) -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ counts }}
+
+    - name: Debug risk summary
+      debug:
+        var: risk_summary
+
+    - name: Send email for each application owner
+      loop: "{{ risk_summary.keys() | list }}"
+      loop_control:
+        loop_var: app_code
+      vars:
+        app_data: "{{ risk_summary[app_code] }}"
+      mail:
+        host: "{{ smtp_server }}"
+        port: "{{ smtp_port }}"
+        username: "{{ smtp_user }}"
+        password: "{{ smtp_password }}"
+        to: "{{ email_recipients[app_code] }}"
+        cc: "{{ email_cc }}"
+        subject: "IT Risk Metrics Summary for {{ app_code }}"
+        body: |
+          IT Risk Metrics Summary for {{ app_code }}:
+
+          - Vulnerabilities:
+              - P1: {{ app_data['Vulnerabilities']['P1'] }}
+              - P2: {{ app_data['Vulnerabilities']['P2'] }}
+
+          - Cryptography:
+              - P1: {{ app_data['Cryptography']['P1'] }}
+              - P2: {{ app_data['Cryptography']['P2'] }}
+
+          - Open Data Risks: {{ app_data['Open Data Risks'] }}
+          - TSS Non-compliance: {{ app_data['TSS'] }}
+
+          All issues are marked for immediate action (Fix-By Date: Now).
+
+          For detailed visualization, visit: {{ grafana_dashboard_link }}
+
+          Regards,
+          IT Compliance Team
+        subtype: plain
+      register: mail_response
+
+    - name: Print mail response
+      debug:
+        msg: "Mail sent successfully to {{ app_code }}: {{ mail_response.msg }}"
