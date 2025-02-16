@@ -1,0 +1,41 @@
+{
+    "image_1": {
+        "_id": "U8hbqJQBx7a-61TTqN6N",
+        "_index": "atu0-server-compliance-metrics",
+        "additionalProperties.port": 34375,
+        "additionalProperties.processName": "/opt/splunk/bin/compsup",
+        "additionalProperties.subjectLine": "CN=server",
+        "affectedItemName": "STRPLVADXJ0006",
+        "affectedItemType": "Unix Server",
+        "appCode": "DXJ0",
+        "complianceAssetId": "1,280,160",
+        "complianceFailure": false,
+        "createDate": "Jan 26, 2025 @ 16:05:50.000",
+        "dataSource": "TENABLE_SC",
+        "environment": "PROD"
+    },
+    "image_2": {
+        "id": "Feb 24, 2025 @ 19:00:00.000",
+        "importIdentifier": "15,550,807",
+        "importSource": "1280160-51192-34375",
+        "issueName": "scr-crypto-scan",
+        "issueReferenceId": "SSL Certificate Cannot Be Trusted",
+        "issueReferenceIdType": "Nessus Plugin ID",
+        "issueReferenceId": 51192,
+        "issueState": "OPEN",
+        "issueType": "Cryptography",
+        "lastDetectedDate": "Jan 26, 2025 @ 12:50:17.000"
+    },
+    "image_3": {
+        "priority": "P2",
+        "remediationOwner": "Asset Owner",
+        "remediationOwnerType": "Self-Service",
+        "reopenCount": 0,
+        "ruleId": "1,254",
+        "severity": "Medium",
+        "solution": "https://connect.fg.rbc.com/docs/DOC-1476386",
+        "startDate": "Jan 26, 2025 @ 12:50:17.000",
+        "timestamp": "Jan 27, 2025 @ 10:22:46.267",
+        "updateDate": "Jan 27, 2025 @ 04:01:54.000"
+    }
+}
