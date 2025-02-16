@@ -1,0 +1,32 @@
+{
+  "records": [
+    {
+      "_id": "mMhbqJQ8x7a-6iTTo9eQ",
+      "_index": "atu0-server-compliance-metrics",
+      "_score": "-",
+      "_type": "_doc",
+      "affectedItemName": "SE167344",
+      "affectedItemType": "Windows Server",
+      "appCode": "UFD8",
+      "complianceAssetId": "1,275,925",
+      "complianceFailure": true,
+      "createDate": "Jan 26, 2025 14:03:14.000",
+      "dataSource": "TENABLE_SC",
+      "environment": "PROD",
+      "exempt": false,
+      "id": "15,545,578",
+      "importIdentifier": "1275925-OUTPUTS",
+      "importSource": "scr-open-share-scan",
+      "issueName": "Open share: OUTPUTS",
+      "issueState": "OPEN",
+      "issueType": "Open Data",
+      "lastDetectedDate": "Jan 26, 2025 11:51:11.000",
+      "remediationOwner": "Asset Owner",
+      "remediationOwnerType": "Self-Service",
+      "reopenCount": 0,
+      "startDate": "Jan 26, 2025 11:51:11.000",
+      "timestamp": "Jan 27, 2025 10:22:45.511",
+      "updateDate": "Jan 27, 2025 04:03:51.000"
+    }
+  ]
+}
