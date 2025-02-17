@@ -1,0 +1,66 @@
+---
+- name: Fetch IT risk metrics from Elasticsearch and process data
+  hosts: localhost
+  gather_facts: no
+  vars:
+    es_id: ""  # Set your Elasticsearch username
+    es_passwd: ""  # Set your Elasticsearch password
+    es_url: ""  # Elasticsearch URL
+    es_index: ""  # Elasticsearch index
+  tasks:
+
+    - name: Fetch IT risk metrics from Elasticsearch
+      uri:
+        url: "{{ es_url }}/{{ es_index }}/_search?pretty"
+        method: GET
+        headers:
+          Content-Type: "application/json"
+        user: "{{ es_id }}"
+        password: "{{ es_passwd }}"
+        force_basic_auth: yes
+        return_content: yes
+      register: es_response
+
+    - name: Store raw Elasticsearch response
+      set_fact:
+        raw_response: "{{ es_response.json }}"
+
+    - name: Parse Elasticsearch response and extract risk metrics
+      shell: |
+        echo '{{ raw_response | to_json }}' | jq -r '
+          .hits.hits[]
+          | select(._source.appCode and ._source.priority and ._source.issueType and ._source.issueState)
+          | { 
+              appCode: ._source.appCode, 
+              issueType: ._source.issueType, 
+              priority: ._source.priority,
+              issueState: ._source.issueState
+            }
+        ' | jq -s '
+          group_by(.appCode) | 
+          map({
+            appCode: .[0].appCode,
+            Vulnerabilities: {
+              P1: ([ .[] | select(.issueType == "Vulnerability" and .priority == "P1") ] | length),
+              P2: ([ .[] | select(.issueType == "Vulnerability" and .priority == "P2") ] | length)
+            },
+            Cryptography: {
+              P1: ([ .[] | select(.issueType == "Cryptography" and .priority == "P1") ] | length),
+              P2: ([ .[] | select(.issueType == "Cryptography" and .priority == "P2") ] | length)
+            },
+            OpenData: {
+              Open: ([ .[] | select(.issueType == "Open Data" and .issueState == "OPEN") ] | length)
+            },
+            TSS: {
+              Open: ([ .[] | select(.issueType == "TSS" and .issueState == "OPEN") ] | length)
+            }
+          })'
+      register: risk_summary_json
+
+    - name: Store risk summary as a fact
+      set_fact:
+        risk_summary: "{{ risk_summary_json.stdout | from_json }}"
+
+    - name: Debug risk summary
+      debug:
+        var: risk_summary
